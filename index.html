@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Координатний навігатор</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            color: #1a202c;
+            margin-bottom: 20px;
+        }
+        .point-group {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+        }
+        .point-group h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+        .inputs {
+            display: flex;
+            gap: 10px;
+        }
+        .input-box {
+            flex: 1;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: #4a5568;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2b6cb0;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            border-radius: 6px;
+            display: none;
+        }
+        .error-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            color: #c53030;
+            border-radius: 6px;
+            display: none;
+        }
+        .result-box p {
+            margin: 5px 0;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #2b6cb0;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧭 Координатний навігатор</h1>
+    
+    <div class="point-group">
+        <h2>Точка А</h2>
+        <div class="inputs">
+            <div class="input-box">
+                <label for="ax">Координата X:</label>
+                <input type="number" id="ax" step="any" placeholder="0">
+            </div>
+            <div class="input-box">
+                <label for="ay">Координата Y:</label>
+                <input type="number" id="ay" step="any" placeholder="0">
+            </div>
+        </div>
+    </div>
+
+    <div class="point-group">
+        <h2>Точка Б</h2>
+        <div class="inputs">
+            <div class="input-box">
+                <label for="bx">Координата X:</label>
+                <input type="number" id="bx" step="any" placeholder="0">
+            </div>
+            <div class="input-box">
+                <label for="by">Координата Y:</label>
+                <input type="number" id="by" step="any" placeholder="0">
+            </div>
+        </div>
+    </div>
+
+    <button onclick="calculateDistance()">Обчислити відстань</button>
+
+    <div id="error" class="error-box">
+        Помилка: будь ласка, заповніть усі поля числовими значеннями.
+    </div>
+
+    <div id="result" class="result-box">
+        <p><strong>--- Результат навігації ---</strong></p>
+        <p id="res-a"></p>
+        <p id="res-b"></p>
+        <p id="res-dist" class="highlight"></p>
+    </div>
+</div>
+
+<script>
+    function calculateDistance() {
+        const axVal = document.getElementById('ax').value;
+        const ayVal = document.getElementById('ay').value;
+        const bxVal = document.getElementById('bx').value;
+        const byVal = document.getElementById('by').value;
+
+        const errorBox = document.getElementById('error');
+        const resultBox = document.getElementById('result');
+
+        if (axVal === '' || ayVal === '' || bxVal === '' || byVal === '') {
+            resultBox.style.display = 'none';
+            errorBox.style.display = 'block';
+            return;
+        }
+
+        const pointA = [parseFloat(axVal), parseFloat(ayVal)];
+        const pointB = [parseFloat(bxVal), parseFloat(byVal)];
+
+        if (isNaN(pointA[0]) || isNaN(pointA[1]) || isNaN(pointB[0]) || isNaN(pointB[1])) {
+            resultBox.style.display = 'none';
+            errorBox.style.display = 'block';
+            return;
+        }
+
+        errorBox.style.display = 'none';
+
+        const distance = Math.sqrt(Math.pow(pointB[0] - pointA[0], 2) + Math.pow(pointB[1] - pointA[1], 2));
+
+        document.getElementById('res-a').textContent = `Точка А: (${pointA[0]}, ${pointA[1]})`;
+        document.getElementById('res-b').textContent = `Точка Б: (${pointB[0]}, ${pointB[1]})`;
+        document.getElementById('res-dist').textContent = `Відстань між точками: ${distance.toFixed(2)} од.`;
+
+        resultBox.style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
